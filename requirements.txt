@@ -1,0 +1,6 @@
+fastapi
+uvicorn[standard]
+pytest
+python-dotenv
+huggingface_hub
+sqlite-utils

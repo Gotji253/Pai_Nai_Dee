@@ -1,0 +1,68 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI/CD Pipeline for Hugging Face Spaces
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # Specifies the type of runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3 # Checks out your repository under $GITHUB_WORKSPACE
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10' # Specifies Python 3.10
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip # Path to cache pip dependencies
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }} # Cache key based on OS and requirements.txt
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt # Installs dependencies from requirements.txt
+
+      - name: Run tests
+        run: |
+          pip install pytest # Installs pytest
+          pytest tests/ # Runs tests located in the tests/ folder
+
+      - name: Log in to Hugging Face Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.hf.space
+          username: ${{ github.repository_owner }} # Uses the repository owner's username
+          password: ${{ secrets.HF_TOKEN }} # Uses the HF_TOKEN secret for authentication
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: . # Docker build context
+          push: true # Pushes the image after building
+          tags: | # Tags the image for Hugging Face Spaces
+            registry.hf.space/atipan01/my-space:latest
+            registry.hf.space/atipan01/my-space:${{ github.sha }}
+          labels: | # Add labels to the image
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Deployment Information
+        run: |
+          echo "Docker image pushed to registry.hf.space/atipan01/my-space with tags: latest, ${{ github.sha }}"
+          echo "Hugging Face Space 'atipan01/my-space' should automatically update if configured to use the 'latest' tag."
+          echo "Alternatively, you can manually configure the Space to use the specific commit SHA tag: ${{ github.sha }}"
