@@ -1,0 +1,124 @@
+/* src/components/ItineraryBuilder.css */
+.itinerary-builder {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+.itinerary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.itinerary-header h2 {
+  margin-top: 0;
+  margin-bottom: 0; /* Adjusted since it's in a flex container */
+  color: #333;
+}
+
+.itinerary-actions button {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+.add-destination-btn {
+  background-color: #28a745; /* Green */
+}
+.add-destination-btn:hover {
+  background-color: #218838;
+}
+
+.trip-alert-btn {
+  background-color: #17a2b8; /* Info blue */
+}
+.trip-alert-btn:hover {
+  background-color: #138496;
+}
+
+.location-list {
+  list-style: none;
+  padding: 0;
+}
+
+.location-list.dragging-over {
+  background-color: #e9f5ff; /* Light blue when dragging over */
+}
+
+/*
+  Styles for .location-item, .drag-handle, .location-info, etc.,
+  have been moved to LocationItemCard.css as the LocationItemCard component
+  now handles the rendering of individual items.
+  Keeping .location-list styles here as they apply to the Droppable container.
+*/
+
+.itinerary-builder p { /* This applies to placeholder text like "Your itinerary is empty." */
+  color: #555;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Loading State Styles */
+.itinerary-builder.loading-active {
+  position: relative; /* Needed for absolute positioning of overlay */
+  overflow: hidden; /* Optional: if overlay is larger */
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10; /* Ensure it's above other content within the builder */
+  border-radius: 8px; /* Match parent */
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-overlay p {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.itinerary-content.content-hidden {
+  visibility: hidden; /* Hide content below overlay */
+  /* Alternatively, you could use opacity: 0.5; or similar */
+}
+
+.itinerary-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.calculate-routes-btn {
+  background-color: #6c757d; /* Bootstrap secondary grey */
+}
+.calculate-routes-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}

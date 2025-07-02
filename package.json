@@ -1,15 +1,24 @@
 {
-  "name": "pai_nai_dee",
-  "version": "1.0.0",
-  "description": "Pai Nai Dee Project",
-  "main": "src/app.js",
+  "name": "travel-planner-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "jest"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1"
+  },
   "devDependencies": {
-    "jest": "^29.0.0"
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/react-beautiful-dnd": "^13.1.8",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
   }
 }

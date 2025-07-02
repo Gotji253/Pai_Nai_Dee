@@ -1,0 +1,91 @@
+/* src/hooks/useNotifier.css */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000; /* Ensure it's above other content */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-toast {
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #fff;
+  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 280px;
+  max-width: 350px;
+  animation: toast-in-right 0.5s forwards;
+  cursor: pointer; /* Allow clicking to dismiss */
+}
+
+.notification-toast:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.notification-info {
+  background-color: #2f96b4; /* Bootstrap info color */
+}
+
+.notification-success {
+  background-color: #51a351; /* Bootstrap success color */
+}
+
+.notification-warning {
+  background-color: #f89406; /* Bootstrap warning color */
+}
+
+.notification-error {
+  background-color: #bd362f; /* Bootstrap error color */
+}
+
+.notification-close-btn {
+  background: none;
+  border: none;
+  color: inherit; /* Inherit color from parent toast for better contrast */
+  opacity: 0.8;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 0 0 10px; /* Add some space from the message */
+  line-height: 1; /* Ensure proper vertical alignment */
+}
+
+.notification-close-btn:hover {
+  opacity: 1;
+}
+
+/* Animation for toast entry */
+@keyframes toast-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Animation for toast exit (can be added if auto-dismiss is not the only way) */
+/*
+.toast-out {
+  animation: toast-out-right 0.5s forwards;
+}
+
+@keyframes toast-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+*/

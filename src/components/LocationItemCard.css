@@ -1,0 +1,113 @@
+/* src/components/LocationItemCard.css */
+
+/* Re-using some styles from ItineraryBuilder.css for consistency,
+   but these can be specific if LocationItemCard is used elsewhere. */
+
+.location-item {
+  display: flex;
+  align-items: flex-start; /* Align items to the top for more complex content */
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative; /* For potential absolute positioned elements inside */
+}
+
+.location-item.dragging {
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.drag-handle {
+  cursor: grab;
+  margin-right: 1rem;
+  color: #777;
+  font-size: 1.2rem;
+  padding-top: 0.25rem; /* Align better with multi-line content */
+}
+
+.location-info {
+  flex-grow: 1;
+}
+
+.location-info strong {
+  font-size: 1.1rem;
+  color: #444;
+  display: block; /* Ensure it takes full width before details */
+  margin-bottom: 0.25rem;
+}
+
+.location-details-prop { /* Differentiate from other 'details' classes */
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.inline-loader {
+  font-size: 0.85rem;
+  color: #888;
+  padding: 0.5rem 0;
+}
+
+.additional-details {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #eee;
+  font-size: 0.9rem;
+}
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #337ab7; /* Blueish for weather */
+}
+
+.weather-icon {
+  width: 24px; /* Small icon */
+  height: 24px;
+  vertical-align: middle; /* Align with text */
+}
+
+.place-extra-info {
+  color: #555;
+}
+
+.place-extra-info .rating {
+  font-weight: bold;
+  color: #f0ad4e; /* Orange for rating */
+  margin-right: 0.75rem;
+}
+
+.place-extra-info .opening-hours {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0.25rem 0;
+}
+
+.place-website {
+  font-size: 0.85rem;
+  color: #3498db;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 0.25rem;
+}
+.place-website:hover {
+  text-decoration: underline;
+}
+
+.photo-gallery {
+  margin-top: 0.5rem;
+}
+
+.place-photo {
+  width: 100px;
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-right: 0.5rem; /* If multiple photos are shown */
+}
