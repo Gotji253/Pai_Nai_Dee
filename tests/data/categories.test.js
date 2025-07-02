@@ -1,5 +1,5 @@
 // tests/data/categories.test.js
-import { categories } from '../../src/data/categories';
+const { categories } = require('../../src/data/categories');
 
 describe('Categories Data', () => {
   test('should export an array of categories', () => {
