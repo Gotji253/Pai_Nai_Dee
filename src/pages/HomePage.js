@@ -22,19 +22,19 @@ const HomePage = ({ onSelectPlace, userInterests, favoritePlaceIds, onToggleFavo
   const hiddenGems = mockPlaces.filter(place => place.hiddenGem);
 
   return (
-    <div className="p-4 pb-20 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">ไปไหนดี?</h1>
+    <div className="p-4 pb-20 bg-slate-50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 mb-6">ไปไหนดี?</h1>
 
       <div className="mb-6">
         <div className="relative">
           <input
             type="text"
             placeholder="ค้นหาสถานที่..."
-            className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shadow-md focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-60 text-gray-700 dark:text-slate-200 dark:placeholder-slate-400 transition-colors duration-300"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Search size={24} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={24} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" />
         </div>
       </div>
 
@@ -45,8 +45,8 @@ const HomePage = ({ onSelectPlace, userInterests, favoritePlaceIds, onToggleFavo
             onClick={() => setSelectedCategory(category)}
             className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200
               ${selectedCategory === category
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-600 dark:bg-blue-500 text-white dark:text-white shadow-lg font-semibold'
+                : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
           >
             {category}
@@ -56,51 +56,54 @@ const HomePage = ({ onSelectPlace, userInterests, favoritePlaceIds, onToggleFavo
 
       {searchTerm || selectedCategory !== 'ทั้งหมด' ? (
         <>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">ผลการค้นหา</h2>
+          <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-5">ผลการค้นหา</h2>
           {filteredPlaces.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredPlaces.map(place => (
+              {filteredPlaces.map((place, idx) => (
                 <PlaceCard
                   key={place.id}
                   place={place}
                   onSelectPlace={onSelectPlace}
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={favoritePlaceIds.includes(place.id)}
+                  index={idx}
                 />
               ))}
             </div>
           ) : (
-            <p className="text-gray-600 text-center py-8">ไม่พบสถานที่ที่ตรงกับเงื่อนไข</p>
+            <p className="text-gray-600 dark:text-slate-400 text-center py-8">ไม่พบสถานที่ที่ตรงกับเงื่อนไข</p>
           )}
         </>
       ) : (
         <>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">คำแนะนำสำหรับคุณ</h2>
+          <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-5">คำแนะนำสำหรับคุณ</h2>
           {recommendedPlaces.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {recommendedPlaces.map(place => (
+              {recommendedPlaces.map((place, idx) => (
                 <PlaceCard
                   key={place.id}
                   place={place}
                   onSelectPlace={onSelectPlace}
                   onToggleFavorite={onToggleFavorite}
                   isFavorite={favoritePlaceIds.includes(place.id)}
+                  index={idx}
                 />
               ))}
             </div>
           ) : (
-            <p className="text-gray-600 text-center py-8">ไม่มีคำแนะนำในขณะนี้ ลองเลือกความสนใจของคุณ</p>
+            <p className="text-gray-600 dark:text-slate-400 text-center py-8">ไม่มีคำแนะนำในขณะนี้ ลองเลือกความสนใจของคุณ</p>
           )}
 
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Hidden Gems</h2>
+          <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-5">Hidden Gems</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {hiddenGems.map(place => (
+            {hiddenGems.map((place, idx) => (
               <PlaceCard
                 key={place.id}
                 place={place}
                 onSelectPlace={onSelectPlace}
                 onToggleFavorite={onToggleFavorite}
                 isFavorite={favoritePlaceIds.includes(place.id)}
+                index={idx}
               />
             ))}
           </div>
