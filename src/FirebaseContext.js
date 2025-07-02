@@ -18,18 +18,25 @@ export const FirebaseProvider = ({ children }) => {
 
   // Helper function to initialize Firebase app and services
   const initFirebase = async () => {
-    // Check for Firebase config global variable
-    if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-      const errMsg = "Firebase config (__firebase_config) is missing or empty.";
+    const firebaseConfigString = import.meta.env.VITE_FIREBASE_CONFIG;
+
+    if (!firebaseConfigString) {
+      const errMsg = "Firebase config (VITE_FIREBASE_CONFIG in .env) is missing or empty.";
       console.error(errMsg);
       setFirebaseError(new Error(errMsg + " App functionality will be limited."));
-      // Return null or throw to indicate failure to the caller if preferred
-      // For now, we allow it to proceed, potentially failing at initializeApp
+      // Allow app to proceed; error will be available in context
+      return { currentAuth: null }; // Indicate failure to initialize auth
     }
 
-    const firebaseConfig = typeof __firebase_config !== 'undefined' && __firebase_config
-      ? JSON.parse(__firebase_config)
-      : {};
+    let firebaseConfig;
+    try {
+      firebaseConfig = JSON.parse(firebaseConfigString);
+    } catch (e) {
+      const errMsg = "Failed to parse Firebase config (VITE_FIREBASE_CONFIG). Ensure it's valid JSON.";
+      console.error(errMsg, e);
+      setFirebaseError(new Error(errMsg));
+      return { currentAuth: null }; // Indicate failure
+    }
 
     let currentApp;
     if (!getApps().length) {
@@ -62,13 +69,14 @@ export const FirebaseProvider = ({ children }) => {
       } else {
         // User is signed out or not yet signed in
         try {
-          // Check for initial auth token global variable
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const initialAuthToken = import.meta.env.VITE_INITIAL_AUTH_TOKEN || (typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null);
+
+          if (initialAuthToken) {
             // Attempt to sign in with custom token
-            await signInWithCustomToken(firebaseAuth, __initial_auth_token);
+            await signInWithCustomToken(firebaseAuth, initialAuthToken);
           } else {
             // Fallback to anonymous sign-in if no token
-            // console.warn("Initial auth token (__initial_auth_token) is missing. Attempting anonymous sign-in.");
+            console.warn("Initial auth token (VITE_INITIAL_AUTH_TOKEN or __initial_auth_token) is missing. Attempting anonymous sign-in.");
             await signInAnonymously(firebaseAuth);
           }
         } catch (authError) {

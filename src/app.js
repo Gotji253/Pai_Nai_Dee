@@ -1,5 +1,6 @@
 // App.js (Main Application Component)
 import React, { useState, useEffect, useContext } from 'react';
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { FirebaseContext } from './FirebaseContext';
 import { doc, setDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove } from 'firebase/firestore';
 
@@ -20,7 +21,10 @@ import { Search, Calendar, Users, Heart } from 'lucide-react';
 
 const MainApp = () => {
   const { db, userId, isAuthReady, getAppId } = useContext(FirebaseContext);
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'itinerary', 'community', 'interests'
+  // const [currentPage, setCurrentPage] = useState('home'); // Replaced by react-router
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [userInterests, setUserInterests] = useState([]);
@@ -186,43 +190,28 @@ const MainApp = () => {
     setShowReviewModal(false);
   };
 
-  const renderPage = () => {
-    if (!isAuthReady) {
-      return <LoadingSpinner />;
-    }
+  // Early return for loading state
+  if (!isAuthReady) {
+    return (
+      <div className="min-h-screen bg-gray-100 font-inter antialiased flex flex-col justify-center items-center">
+        <LoadingSpinner />
+        {/* Optional: Add script/style tags here if absolutely needed during loading, though better in index.html */}
+      </div>
+    );
+  }
 
-    switch (currentPage) {
-      case 'home':
-        return (
-          <HomePage
-            onSelectPlace={setSelectedPlace}
-            userInterests={userInterests}
-            favoritePlaceIds={favoritePlaceIds}
-            onToggleFavorite={handleToggleFavorite}
-            onAddToItinerary={handleAddToItinerary}
-          />
-        );
-      case 'itinerary':
-        return (
-          <ItineraryPage
-            itineraryPlaces={itineraryPlaces}
-            onRemoveFromItinerary={handleRemoveFromItinerary}
-          />
-        );
-      case 'community':
-        return <CommunityFeedPage />;
-      case 'interests':
-        return <InterestsForm onSaveInterests={handleSaveInterests} initialInterests={userInterests} />;
-      default:
-        return <HomePage />;
-    }
+  // Define a helper function to determine active link style
+  const getNavLinkClass = (path) => {
+    return location.pathname === path
+      ? 'text-blue-600'
+      : 'text-gray-500 hover:text-blue-500';
   };
 
   return (
     <div className="min-h-screen bg-gray-100 font-inter antialiased flex flex-col">
-      {/* Tailwind CSS CDN */}
+      {/* Tailwind CSS CDN, Font, and Styles should ideally be in public/index.html or handled by a CSS build process */}
+      {/* For this refactor, leaving them here temporarily to focus on routing logic. */}
       <script src="https://cdn.tailwindcss.com"></script>
-      {/* Inter Font */}
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       <style>
         {`
@@ -255,8 +244,48 @@ const MainApp = () => {
         `}
       </style>
 
-      <div className="flex-grow">
-        {renderPage()}
+      <div className="flex-grow pb-16"> {/* Added pb-16 for bottom nav clearance */}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                onSelectPlace={setSelectedPlace}
+                userInterests={userInterests}
+                favoritePlaceIds={favoritePlaceIds}
+                onToggleFavorite={handleToggleFavorite}
+                onAddToItinerary={handleAddToItinerary}
+              />
+            }
+          />
+          <Route
+            path="/itinerary"
+            element={
+              <ItineraryPage
+                itineraryPlaces={itineraryPlaces}
+                onRemoveFromItinerary={handleRemoveFromItinerary}
+              />
+            }
+          />
+          <Route path="/community" element={<CommunityFeedPage />} />
+          <Route
+            path="/interests"
+            element={<InterestsForm onSaveInterests={handleSaveInterests} initialInterests={userInterests} />}
+          />
+          {/* Add a default route or a 404 page if needed */}
+          <Route
+            path="*"
+            element={
+              <HomePage // Fallback to HomePage or a dedicated NotFoundPage
+                onSelectPlace={setSelectedPlace}
+                userInterests={userInterests}
+                favoritePlaceIds={favoritePlaceIds}
+                onToggleFavorite={handleToggleFavorite}
+                onAddToItinerary={handleAddToItinerary}
+              />
+            }
+          />
+        </Routes>
       </div>
 
       {selectedPlace && (
@@ -288,38 +317,34 @@ const MainApp = () => {
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
         <div className="flex justify-around items-center h-16">
-          <button
-            onClick={() => setCurrentPage('home')}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200
-              ${currentPage === 'home' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'}`}
+          <Link
+            to="/"
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 ${getNavLinkClass('/')}`}
           >
             <Search size={24} />
             <span className="text-xs mt-1">ค้นหา</span>
-          </button>
-          <button
-            onClick={() => setCurrentPage('itinerary')}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200
-              ${currentPage === 'itinerary' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'}`}
+          </Link>
+          <Link
+            to="/itinerary"
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 ${getNavLinkClass('/itinerary')}`}
           >
             <Calendar size={24} />
             <span className="text-xs mt-1">แผนเดินทาง</span>
-          </button>
-          <button
-            onClick={() => setCurrentPage('community')}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200
-              ${currentPage === 'community' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'}`}
+          </Link>
+          <Link
+            to="/community"
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 ${getNavLinkClass('/community')}`}
           >
             <Users size={24} />
             <span className="text-xs mt-1">ชุมชน</span>
-          </button>
-          <button
-            onClick={() => setCurrentPage('interests')}
-            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200
-              ${currentPage === 'interests' ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'}`}
+          </Link>
+          <Link
+            to="/interests"
+            className={`flex flex-col items-center justify-center p-2 rounded-lg transition-colors duration-200 ${getNavLinkClass('/interests')}`}
           >
             <Heart size={24} />
             <span className="text-xs mt-1">ความสนใจ</span>
-          </button>
+          </Link>
           {/* Display User ID for debugging/identification */}
           <div className="absolute top-2 right-2 text-xs text-gray-400">
             ID: {userId ? userId.substring(0, 8) + '...' : 'N/A'}
@@ -330,11 +355,4 @@ const MainApp = () => {
   );
 };
 
-// This is the main entry point for the React App in Canvas
-export default function AppWrapper() {
-  return (
-    <FirebaseProvider>
-      <MainApp />
-    </FirebaseProvider>
-  );
-}
+export default MainApp; // MainApp is now the default export
