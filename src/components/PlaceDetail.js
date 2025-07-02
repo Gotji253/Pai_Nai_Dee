@@ -27,42 +27,42 @@ const PlaceDetail = ({ place, onClose, onAddReview, onToggleFavorite, isFavorite
           onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/600x400/D3D3D3/000000?text=${place.name}`; }}
         />
         <div className="flex justify-between items-center">
-          <div className="flex items-center text-lg text-gray-700">
-            <Star size={20} className="text-yellow-400 mr-1 fill-yellow-400" />
+          <div className="flex items-center text-lg text-gray-700 dark:text-slate-200">
+            <Star size={20} className="text-yellow-400 mr-1 fill-yellow-400" /> {/* Star color consistent */}
             <span>{place.rating} ({place.reviews} รีวิว)</span>
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => onToggleFavorite(place.id)}
-              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="p-2 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
             >
-              <Heart size={24} className={isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-500'} />
+              <Heart size={24} className={isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-500 dark:text-slate-400'} />
             </button>
             <button
               onClick={() => onAddToItinerary(place)}
-              className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors text-blue-600"
+              className="p-2 rounded-full bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors text-blue-600 dark:text-blue-300"
             >
               <PlusCircle size={24} />
             </button>
             <button
               onClick={() => alert('ฟังก์ชันแชร์ยังไม่เปิดใช้งาน')} // Using alert for now, replace with MessageModal
-              className="p-2 rounded-full bg-green-100 hover:bg-green-200 transition-colors text-green-600"
+              className="p-2 rounded-full bg-green-100 dark:bg-green-800 hover:bg-green-200 dark:hover:bg-green-700 transition-colors text-green-600 dark:text-green-300"
             >
               <Share2 size={24} />
             </button>
           </div>
         </div>
 
-        <p className="text-gray-700 leading-relaxed">{place.description}</p>
+        <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{place.description}</p>
 
-        <div className="border-t border-gray-200 pt-4 space-y-2">
-          <p className="text-gray-600 flex items-center"><BookOpen size={18} className="mr-2 text-gray-500" />เวลาทำการ: <span className="font-medium ml-2">{place.openingHours}</span></p>
-          <p className="text-gray-600 flex items-center"><Info size={18} className="mr-2 text-gray-500" />ค่าเข้าชม: <span className="font-medium ml-2">{place.admissionFee}</span></p>
-          <p className="text-gray-600 flex items-center"><Send size={18} className="mr-2 text-gray-500" />ติดต่อ: <span className="font-medium ml-2">{place.contact}</span></p>
+        <div className="border-t border-gray-200 dark:border-slate-700 pt-4 space-y-2">
+          <p className="text-gray-600 dark:text-slate-300 flex items-center"><BookOpen size={18} className="mr-2 text-gray-500 dark:text-slate-400" />เวลาทำการ: <span className="font-medium ml-2">{place.openingHours}</span></p>
+          <p className="text-gray-600 dark:text-slate-300 flex items-center"><Info size={18} className="mr-2 text-gray-500 dark:text-slate-400" />ค่าเข้าชม: <span className="font-medium ml-2">{place.admissionFee}</span></p>
+          <p className="text-gray-600 dark:text-slate-300 flex items-center"><Send size={18} className="mr-2 text-gray-500 dark:text-slate-400" />ติดต่อ: <span className="font-medium ml-2">{place.contact}</span></p>
           {place.tags && (
             <div className="flex flex-wrap gap-2 mt-2">
               {place.tags.map(tag => (
-                <span key={tag} className="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">{tag}</span>
+                <span key={tag} className="bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">{tag}</span>
               ))}
             </div>
           )}
@@ -70,14 +70,14 @@ const PlaceDetail = ({ place, onClose, onAddReview, onToggleFavorite, isFavorite
 
         <button
           onClick={handleOpenMap}
-          className="w-full flex items-center justify-center px-4 py-3 bg-indigo-600 text-white font-semibold rounded-full shadow-md hover:bg-indigo-700 transition-colors mt-4"
+          className="w-full flex items-center justify-center px-4 py-3 bg-indigo-600 dark:bg-indigo-500 text-white font-semibold rounded-full shadow-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors mt-4"
         >
           <MapPin size={20} className="mr-2" /> เปิดในแผนที่
         </button>
 
         <button
           onClick={() => onAddReview(place.id)}
-          className="w-full flex items-center justify-center px-4 py-3 bg-emerald-600 text-white font-semibold rounded-full shadow-md hover:bg-emerald-700 transition-colors mt-2"
+          className="w-full flex items-center justify-center px-4 py-3 bg-emerald-600 dark:bg-emerald-500 text-white font-semibold rounded-full shadow-md hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors mt-2"
         >
           <Star size={20} className="mr-2" /> เพิ่มรีวิวและให้คะแนน
         </button>
