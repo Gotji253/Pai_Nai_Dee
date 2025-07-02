@@ -1,5 +1,5 @@
 // src/setupTests.ts
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom'; // Updated import path
 
 // You can add other global setup code here if needed.
 // For example, mocking global objects or functions.
