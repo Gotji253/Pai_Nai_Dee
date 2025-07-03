@@ -4,12 +4,14 @@
   "description": "Pai Nai Dee Project",
   "main": "src/app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.0.0"
+    "jest": "^29.0.0",
+    "eslint": "^8.57.0"
   }
 }
