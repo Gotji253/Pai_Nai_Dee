@@ -5,8 +5,11 @@ import AppLayout from './components/AppLayout';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import FavoritesPage from './pages/FavoritesPage';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/ProfilePage'; // Will be updated later
 import PlaceDetailsPage from './pages/PlaceDetailsPage';
+import LoginPage from './pages/LoginPage'; // Import LoginPage
+import RegisterPage from './pages/RegisterPage'; // Import RegisterPage
+import { AuthProvider } from './contexts/AuthContext'; // Import AuthProvider
 import theme from './theme'; // Import the custom theme
 import './App.css'; // Keep for global styles if any
 
@@ -23,20 +26,24 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* Applies baseline styles and background color from theme */}
       <Router>
-        <AppLayout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/favorites" element={<FavoritesPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/place/:id" element={<PlaceDetailsPage />} />
-            {/* Fallback for undefined routes */}
-            <Route
-              path="*"
-              element={<PlaceholderPage title="404 - Page Not Found" message="Sorry, the page you are looking for does not exist." />}
-            />
-          </Routes>
-        </AppLayout>
+        <AuthProvider> {/* Wrap AppLayout and Routes with AuthProvider */}
+          <AppLayout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/profile" element={<ProfilePage />} /> {/* Will require auth */}
+              <Route path="/place/:id" element={<PlaceDetailsPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              {/* Fallback for undefined routes */}
+              <Route
+                path="*"
+                element={<PlaceholderPage title="404 - Page Not Found" message="Sorry, the page you are looking for does not exist." />}
+              />
+            </Routes>
+          </AppLayout>
+        </AuthProvider>
       </Router>
     </ThemeProvider>
   );
