@@ -25,11 +25,13 @@ The `tourist-app` is a web application designed to help users discover tourist a
 ### 3. Code Structure
 
 *   **`src/`**: Contains all the application source code.
-    *   **`components/`**: Reusable UI components (e.g., `AppLayout.tsx`, `BottomNavigation.tsx`).
+    *   **`api.ts`**: Contains helper functions for making API requests using Axios.
+    *   **`components/`**: Reusable UI components (e.g., `AppLayout.tsx`, `BottomNavigation.tsx`, `TripPlanner.tsx`).
+    *   **`contexts/`**: React Context API providers and hooks (e.g., `AuthContext.tsx`, `PlacesContext.tsx`).
     *   **`pages/`**: Top-level components representing different views/pages of the app (e.g., `HomePage.tsx`, `SearchPage.tsx`).
     *   **`utils/`**: Utility functions and modules (e.g., `favoritesManager.ts` for handling localStorage).
     *   **`assets/`**: (Future) For static assets like images, icons, etc.
-    *   **`App.tsx`**: Main application component, sets up routing and theme.
+    *   **`App.tsx`**: Main application component, sets up routing, theme, and global context providers.
     *   **`theme.ts`**: Material-UI theme customization.
     *   **`index.tsx`**: Entry point of the React application.
 
@@ -41,7 +43,9 @@ The `tourist-app` is a web application designed to help users discover tourist a
     *   Custom theme is defined in `src/theme.ts`.
     *   Responsive design is primarily handled using MUI's Grid system, `sx` prop with responsive breakpoints (e.g., `{ xs: ..., md: ... }`), and responsive typography.
 *   **React Router DOM**: For client-side routing. Routes are defined in `src/App.tsx`.
-*   **`localStorage`**: Used for persisting user favorites (see `src/utils/favoritesManager.ts`).
+*   **Axios**: Used for making HTTP requests to the backend API. Configured in `src/api.ts`.
+*   **React Context API**: Used for global state management, particularly for places and trip planning data (`PlacesContext.tsx`).
+*   **`localStorage`**: Used for persisting user favorites (see `src/utils/favoritesManager.ts`). (Note: Trip data is now handled via API).
 
 ### 5. Development Guidelines
 
@@ -54,22 +58,36 @@ The `tourist-app` is a web application designed to help users discover tourist a
     *   Ensure components are responsive and test on different screen sizes (conceptually, if direct testing isn't possible).
 *   **State Management:**
     *   For local component state, use `useState`.
-    *   For simple global state or cross-component state that doesn't warrant a larger library, consider React Context API.
-    *   Currently, `localStorage` is used for favorites. Be mindful of its limitations (string-only storage, synchronous).
+    *   **React Context API** is the primary method for managing global application state such as places data, trip planning information, loading/error states related to API calls. See `src/contexts/PlacesContext.tsx`.
+    *   `localStorage` is used for persisting user favorites.
 *   **Data Fetching:**
-    *   Currently, most data is mocked within the components (e.g., `mockPlaceDatabase` in `PlaceDetailsPage.tsx`).
-    *   If integrating a backend, consider using `fetch` API or libraries like `axios`. Manage loading and error states appropriately.
+    *   API calls are managed through helper functions in `src/api.ts` which uses `axios`.
+    *   Data fetching logic (including loading and error states) is primarily handled within the React Context (`PlacesContext.tsx`) and consumed by page/component hooks.
+    *   Mock data has been replaced with live API calls in `SearchPage.tsx` and `HomePage.tsx`.
 *   **File Naming:**
     *   Utility files/modules: camelCase (e.g., `favoritesManager.ts`).
+    *   Context files: PascalCase (e.g., `PlacesContext.tsx`).
 *   **Commenting:** Add comments for complex logic or non-obvious code sections.
 
-### 6. Current Mock Data & Future Backend
+### 6. Backend Integration & Data Flow
 
-*   The application currently uses mock data extensively (e.g., in `HomePage.tsx`, `SearchPage.tsx`, `PlaceDetailsPage.tsx`). This data is defined directly within the component files or as local constants.
-*   The "Favorite" feature uses `localStorage` for persistence.
-*   Future development will likely involve replacing mock data and `localStorage` for favorites with API calls to a backend service.
+*   The application now integrates with a backend API for fetching places (`GET /places`) and saving trips (`POST /trips`).
+*   Mock data in `HomePage.tsx` and `SearchPage.tsx` has been replaced with API calls.
+*   `PlacesContext.tsx` is central to managing place data, search/filter operations, and trip creation logic.
+    *   `fetchPlaces` in the context handles fetching and filtering places.
+    *   `createTrip` in the context handles submitting new trips to the backend.
+*   Loading spinners and error messages are implemented for all API interactions.
+*   The "Favorite" feature still uses `localStorage`.
 
-### 7. Testing
+### 7. Key New/Updated Components
+
+*   **`src/api.ts`**: Centralized Axios instance and API call helper functions (get, post).
+*   **`src/contexts/PlacesContext.tsx`**: Manages state for places, search results, and trip planning. Provides functions to interact with the places and trips API endpoints.
+*   **`src/components/TripPlanner.tsx`**: UI component for users to view selected places, name their trip, and save it. Integrated into `SearchPage.tsx`.
+*   **`src/pages/SearchPage.tsx`**: Significantly updated to use `PlacesContext` for data, handle API states (loading, error), and integrate the `TripPlanner` component. Supports keyword search, category, and tag-based filtering via API.
+*   **`src/pages/HomePage.tsx`**: Updated to fetch a limited set of "featured" places from the API instead of using mock data.
+
+### 8. Testing
 
 *   (Future) Implement unit tests using Jest and React Testing Library.
 *   (Future) Implement end-to-end tests using a framework like Cypress or Playwright.
