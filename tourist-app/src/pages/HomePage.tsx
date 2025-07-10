@@ -126,8 +126,18 @@ const HomePage: React.FC = () => {
 
         // This will use the global 'places' from the context.
         // To make this component fetch its own limited set:
-        // Simulating a direct fetch for featured items:
-        const response = await get<Place[]>('/places', { _limit: 3 }); // JSONPlaceholder style limit
+        // Fetch a limited number of places.
+        // Ideally, the API should have a specific endpoint or query parameters for "featured" places
+        // e.g., /places/featured, or /places?isFeatured=true&limit=3, or /places?sortBy=rating&order=desc&limit=3
+        // For now, we'll use a common 'limit' parameter.
+        // Consult with the backend team for the best approach.
+        const queryParams: Record<string, any> = { limit: 3 };
+        // Example of how you might add other params if known:
+        // queryParams.sortBy = 'rating';
+        // queryParams.order = 'desc';
+        // queryParams.isFeatured = true;
+
+        const response = await get<Place[]>('/places', queryParams);
         setFeaturedPlaces(response);
 
       } catch (e: any) {

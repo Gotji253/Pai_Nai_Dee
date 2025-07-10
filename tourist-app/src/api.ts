@@ -22,26 +22,42 @@ const apiClient: AxiosInstance = axios.create({
 
 // Optional: Add interceptors for request or response
 // For example, to add an auth token to every request
-// apiClient.interceptors.request.use(config => {
-//   const token = localStorage.getItem('authToken');
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+apiClient.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('authToken'); // Directly get token from localStorage
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
-// apiClient.interceptors.response.use(
-//   response => response,
-//   error => {
-//     // Handle global errors here, e.g., redirect to login on 401
-//     if (error.response && error.response.status === 401) {
-//       // Handle unauthorized access
-//       console.error('Unauthorized, redirecting to login.');
-//       // window.location.href = '/login';
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+apiClient.interceptors.response.use(
+  response => response,
+  error => {
+    // Handle global errors here
+    if (error.response && error.response.status === 401) {
+      // Handle unauthorized access
+      console.error('Unauthorized (401). Token might be invalid or expired.');
+      // Optional: Clear token and redirect to login
+      // localStorage.removeItem('authToken'); // Consider if AuthContext should solely manage this
+      // window.location.href = '/login'; // Force redirect
+      // Or, simply let the caller handle the error if more specific action is needed.
+      // For now, we will just log it and re-throw. Specific components or contexts
+      // can catch this error and decide to logout or redirect.
+      // If we want a hard redirect, uncomment localStorage.removeItem and window.location.
+    }
+    // It's important to return Promise.reject(error) so that individual .catch() blocks still work.
+    // However, we are already wrapping errors in handleApiError in get/post/put/del.
+    // The handleApiError function will be the one shaping the error.
+    // So, the interceptor's main job here is to react to specific statuses globally if needed.
+    // The actual error object will be processed by handleApiError.
+    return Promise.reject(error); // This will then be caught by handleApiError
+  }
+);
 
 /**
  * Generic GET request handler
