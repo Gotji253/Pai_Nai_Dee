@@ -1,14 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Container, Button, Box, Paper, Grid, Rating, Chip, Menu, MenuItem, IconButton } from '@mui/material';
+import { Typography, Container, Button, Box, Paper, Grid, Rating, Chip, Menu, MenuItem } from '@mui/material';
 import { Favorite, FavoriteBorder, Share, LocationOn, Comment, Facebook, Twitter, WhatsApp } from '@mui/icons-material'; // Added specific share icons
-import { getFavoritePlaces, isPlaceFavorite, addFavoritePlace, removeFavoritePlace, FavoritePlace } from '../utils/favoritesManager';
+import { isPlaceFavorite, addFavoritePlace, removeFavoritePlace, FavoritePlace } from '../utils/favoritesManager';
+// Removed getFavoritePlaces as it's not used in this component
+// import { Place as ContextPlace } from '../contexts/PlacesContext'; // Example if we wanted to use the exact context Place
+
+// --- Local Type Definitions for this page ---
+interface Review {
+  id: string;
+  user: string;
+  comment: string;
+  rating: number;
+  date: string; // Assuming date is a string from mock data
+}
+
+// Define a type for the place details that matches the mock data structure
+// This can be a subset or an extension of the main Place type from context if needed
+interface PlaceDetailsType {
+  id: string;
+  name: string;
+  description: string;
+  images: string[]; // Renamed from photos to match mock data
+  rating: number;
+  reviews: Review[];
+  location: string; // Mock data uses string for location
+  category: string;
+  tags: string[];
+  priceRange?: string; // Optional as not in 'default'
+  // Fields from ContextPlace that are not in mock data (e.g., location object) are omitted or kept optional
+}
+
 
 // Mock data structure - in a real app, this would come from an API based on `id`
-// Ensure this structure is compatible with FavoritePlace interface for relevant fields
-const mockPlaceDatabase: { [key: string]: any } = {
+const mockPlaceDatabase: { [key: string]: PlaceDetailsType } = {
   '1': {
-    id: '1', // Important for favoritesManager
+    id: '1',
     name: 'Beautiful Mountain Peak',
     description: 'Experience the breathtaking views from the top of the serene mountains. This destination offers challenging hikes and rewarding vistas, perfect for adventure seekers and nature lovers alike. Remember to bring appropriate gear.',
     images: ['https://via.placeholder.com/600x400.png?text=Mountain+View+1', 'https://via.placeholder.com/300x200.png?text=Mountain+Path', 'https://via.placeholder.com/300x200.png?text=Summit+Selfie'],
@@ -23,7 +50,7 @@ const mockPlaceDatabase: { [key: string]: any } = {
     priceRange: 'Free - $$ (for guided tours)',
   },
   '2': {
-    id: '2', // Important for favoritesManager
+    id: '2',
     name: 'Sunny Beach Resort',
     description: 'Relax and unwind at this luxurious beach resort with golden sands and crystal clear waters. Enjoy various water sports, spa treatments, and exquisite dining options. Perfect for a family vacation or a romantic getaway.',
     images: ['https://via.placeholder.com/600x400.png?text=Beach+Resort+Main', 'https://via.placeholder.com/300x200.png?text=Beach+Activities', 'https://via.placeholder.com/300x200.png?text=Resort+Pool'],
@@ -37,7 +64,7 @@ const mockPlaceDatabase: { [key: string]: any } = {
     tags: ['beach', 'resort', 'luxury', 'sea', 'sand'],
     priceRange: '$$$ - $$$$',
   },
-  '3': { // Added item from HomePage mock data
+  '3': {
     id: '3',
     name: 'Historic City Tour',
     description: 'Explore the rich history and culture of this ancient city.',
@@ -51,7 +78,7 @@ const mockPlaceDatabase: { [key: string]: any } = {
     tags: ['history', 'museum', 'architecture'],
     priceRange: '$ - $$',
   },
-  'default': {
+  'default': { // This 'default' object must also conform to PlaceDetailsType
     id: 'unknown',
     name: 'Place Not Found',
     description: 'The place you are looking for does not exist or has been moved.',
@@ -61,19 +88,21 @@ const mockPlaceDatabase: { [key: string]: any } = {
     location: 'Unknown',
     category: 'Unknown',
     tags: [],
+    // priceRange is optional, so it's fine if it's missing here
   }
 };
 
 
 const PlaceDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [place, setPlace] = useState<any>(null); // Consider defining a proper type for place
+  const [place, setPlace] = useState<PlaceDetailsType | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [anchorElShare, setAnchorElShare] = React.useState<null | HTMLElement>(null);
 
 
   useEffect(() => {
     if (id) {
+        // Ensure that the key exists in mockPlaceDatabase, otherwise use 'default'
         const currentPlace = mockPlaceDatabase[id] || mockPlaceDatabase['default'];
         setPlace(currentPlace);
         if (currentPlace.id !== 'unknown') {
@@ -85,12 +114,16 @@ const PlaceDetailsPage: React.FC = () => {
   const handleToggleFavorite = () => {
     if (!place || place.id === 'unknown') return;
 
+    // Ensure image exists before trying to access images[0]
+    const imageUrl = place.images && place.images.length > 0 ? place.images[0] : 'https://via.placeholder.com/150';
+
+
     const favoritePlaceData: FavoritePlace = {
         id: place.id,
         name: place.name,
-        image: place.images[0], // Store primary image
+        image: imageUrl, // Use the checked image URL
         category: place.category,
-        description: place.description.substring(0, 100) + '...' // Store a short description
+        description: place.description.substring(0, 100) + '...'
     };
 
     if (isFavorite) {
@@ -102,10 +135,10 @@ const PlaceDetailsPage: React.FC = () => {
   };
 
   const handleShareClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (navigator.share) {
+    if (navigator.share && place) {
       navigator.share({
-        title: place?.name,
-        text: `Check out ${place?.name}!`,
+        title: place.name,
+        text: `Check out ${place.name}!`,
         url: window.location.href,
       })
       .then(() => console.log('Successful share'))
@@ -130,7 +163,7 @@ const PlaceDetailsPage: React.FC = () => {
   }
 
   const shareUrl = window.location.href;
-  const shareTitle = `Check out ${place?.name}!`;
+  const shareTitle = `Check out ${place.name}!`; // place is guaranteed to be non-null here
 
   return (
     <Container maxWidth="md" sx={{ mt: 2, mb: 7 }}> {/* Added mb to avoid overlap with bottom nav */}
@@ -142,13 +175,17 @@ const PlaceDetailsPage: React.FC = () => {
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} md={7}>
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: { xs: 2, md: 0 } }}>
-              <img src={place.images[0]} alt={place.name} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px' }} />
+              <img
+                src={place.images && place.images.length > 0 ? place.images[0] : 'https://via.placeholder.com/600x400.png?text=No+Image+Available'}
+                alt={place.name}
+                style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '8px' }}
+              />
             </Box>
           </Grid>
           <Grid item xs={12} md={5}>
-            {place.images.slice(1,3).map((img: string, index: number) => ( // Show only 2 additional small images
+            {place.images && place.images.slice(1,3).map((img: string, index: number) => (
               <Box key={index} sx={{ mb: index < place.images.slice(1,3).length -1 ? 1: 0 }}>
-                 <img src={img} alt={`${place.name} ${index + 1}`} style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '4px' }} />
+                 <img src={img} alt={`${place.name} additional view ${index + 1}`} style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '4px' }} />
               </Box>
             ))}
           </Grid>
@@ -163,7 +200,7 @@ const PlaceDetailsPage: React.FC = () => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
             <Chip label={place.category} color="primary" size="small" />
-            {place.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" />)}
+            {place.tags && place.tags.map((tag: string) => <Chip key={tag} label={tag} size="small" />)}
         </Box>
 
         <Typography variant="body1" paragraph sx={{ lineHeight: 1.7 }}>
@@ -210,12 +247,13 @@ const PlaceDetailsPage: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Rating value={place.rating} precision={0.1} readOnly />
         <Typography variant="subtitle1">
-          {place.rating % 1 === 0 ? place.rating.toFixed(0) : place.rating.toFixed(1)} out of 5 ({place.reviews.length} reviews)
+          {/* Ensure place.rating is a number before calling toFixed */}
+          {typeof place.rating === 'number' ? (place.rating % 1 === 0 ? place.rating.toFixed(0) : place.rating.toFixed(1)) : 'N/A'} out of 5 ({place.reviews ? place.reviews.length : 0} reviews)
         </Typography>
       </Box>
 
-      {place.reviews.length > 0 ? (
-        place.reviews.map((review: any, index: number) => ( // Define a proper type for review
+      {place.reviews && place.reviews.length > 0 ? (
+        place.reviews.map((review: Review, index: number) => (
           <Paper key={review.id || index} elevation={1} sx={{ p: 2, mb: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{review.user}</Typography>
