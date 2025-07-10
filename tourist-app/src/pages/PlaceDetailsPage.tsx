@@ -210,7 +210,7 @@ const PlaceDetailsPage: React.FC = () => {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid component="div" item xs={12} md={5}>
             {placeData.images && placeData.images.slice(1,3).map((img: string, index: number) => (
               <Box key={index} sx={{ mb: index < placeData.images.slice(1,3).length -1 ? 1: 0 }}>
                  <img src={img} alt={`${placeData.name} additional view ${index + 1}`} style={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: '4px' }} />
