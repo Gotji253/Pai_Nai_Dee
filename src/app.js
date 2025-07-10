@@ -11,11 +11,11 @@ import PlaceDetail from './components/PlaceDetail';
 import AddReviewModal from './components/AddReviewModal';
 import InterestsForm from './components/InterestsForm';
 
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage.tsx'; // Changed to .tsx
 import ItineraryPage from './pages/ItineraryPage';
 import CommunityFeedPage from './pages/CommunityFeedPage';
 
-import { mockPlaces } from './data/mockPlaces'; // Import mock data for place details
+import { mockPlaces } from './data/mockplaces'; // Corrected path for mockPlaces
 
 import { Search, Calendar, Users, Heart } from 'lucide-react';
 
