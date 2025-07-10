@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
-import { Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, CircularProgress, Alert, Chip } from '@mui/material';
+import { Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, CircularProgress, Alert, Chip, GridProps } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { usePlaces, Place } from '../contexts/PlacesContext'; // Import usePlaces
+
+const gridItemProps: GridProps = {
+  item: true,
+  xs: 12,
+  sm: 6,
+  md: 4,
+  component: "div" // Added based on previous step, kept for consistency
+};
 
 const HomePage: React.FC = () => {
   const { places, isLoading, error, fetchPlaces } = usePlaces();
@@ -56,7 +64,7 @@ const HomePage: React.FC = () => {
       {!isLoading && !error && featuredPlaces.length > 0 && (
         <Grid container spacing={3}>
           {featuredPlaces.map((item) => (
-            <Grid item xs={12} sm={6} md={4} key={item.id}>
+            <Grid {...gridItemProps} key={item.id}>
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <CardMedia
                   component="img"
