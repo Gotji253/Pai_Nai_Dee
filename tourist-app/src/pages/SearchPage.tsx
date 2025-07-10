@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Typography, Container, TextField, Box, Grid, Card, CardContent, Button,
-  MenuItem, Select, FormControl, InputLabel, Chip, CircularProgress, Alert, SelectChangeEvent
+  MenuItem, Select, FormControl, InputLabel, Chip, CircularProgress, Alert, SelectChangeEvent,
+  Snackbar
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { usePlaces } from '../contexts/PlacesContext'; // Import the context hook
@@ -17,6 +18,8 @@ const SearchPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   // Local state for tags input, assuming tags are entered as a comma-separated string
   const [tagsInput, setTagsInput] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
 
   // Initial fetch of all places or based on some default criteria
@@ -46,8 +49,13 @@ const SearchPage: React.FC = () => {
 
   const handleAddPlaceToPlanner = (place: Place) => {
     addPlaceToTrip(place);
-    // Optionally, provide user feedback e.g., a snackbar message
-    alert(`${place.name} added to your trip planner!`);
+    setSnackbarMessage(`${place.name} added to your trip planner!`);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setSnackbarMessage('');
   };
 
   return (
@@ -178,6 +186,13 @@ const SearchPage: React.FC = () => {
           </Box>
         </Grid>
       </Grid>
+       <Snackbar
+         open={snackbarOpen}
+         autoHideDuration={4000} // Slightly shorter for quick info
+         onClose={handleSnackbarClose}
+         message={snackbarMessage}
+         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+       />
     </Container>
   );
 };

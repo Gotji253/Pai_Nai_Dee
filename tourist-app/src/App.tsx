@@ -5,8 +5,9 @@ import AppLayout from './components/AppLayout';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import FavoritesPage from './pages/FavoritesPage';
-import ProfilePage from './pages/ProfilePage'; // Will be updated later
+import ProfilePage from './pages/ProfilePage';
 import PlaceDetailsPage from './pages/PlaceDetailsPage';
+import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
 import LoginPage from './pages/LoginPage'; // Import LoginPage
 import RegisterPage from './pages/RegisterPage'; // Import RegisterPage
 import { AuthProvider } from './contexts/AuthContext'; // Import AuthProvider
@@ -33,8 +34,22 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/search" element={<SearchPage />} />
-                <Route path="/favorites" element={<FavoritesPage />} />
-                <Route path="/profile" element={<ProfilePage />} /> {/* Will require auth */}
+                <Route
+                  path="/favorites"
+                  element={
+                    <ProtectedRoute>
+                      <FavoritesPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/place/:id" element={<PlaceDetailsPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
