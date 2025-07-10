@@ -64,6 +64,7 @@ The `tourist-app` is a web application designed to help users discover tourist a
     *   API calls are managed through helper functions in `src/api.ts` which uses `axios`.
     *   Data fetching logic (including loading and error states) is primarily handled within the React Context (`PlacesContext.tsx`) and consumed by page/component hooks.
     *   Mock data has been replaced with live API calls in `SearchPage.tsx` and `HomePage.tsx`.
+    *   `PlaceDetailsPage.tsx` now fetches specific place details from the API (`/places/{id}`) instead of using mock data, and includes loading/error handling for this process.
 *   **File Naming:**
     *   Utility files/modules: camelCase (e.g., `favoritesManager.ts`).
     *   Context files: PascalCase (e.g., `PlacesContext.tsx`).
