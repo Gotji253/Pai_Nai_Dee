@@ -201,7 +201,7 @@ const PlaceDetailsPage: React.FC = () => {
         </Typography>
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={7}>
+          <Grid component="div" item xs={12} md={7}>
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: { xs: 2, md: 0 } }}>
               <img
                 src={placeData.images && placeData.images.length > 0 ? placeData.images[0] : 'https://via.placeholder.com/600x400.png?text=No+Image+Available'}
