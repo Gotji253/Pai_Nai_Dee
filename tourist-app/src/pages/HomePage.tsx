@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, CircularProgress, Alert, Chip } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { usePlaces, Place } from '../contexts/PlacesContext'; // Assuming Place type is exported
+import { Place } from '../contexts/PlacesContext'; // Assuming Place type is exported
 import { get } from '../api'; // Import the get function
 
 const HomePage: React.FC = () => {
-  // const { fetchPlaces } = usePlaces(); // We might not need this if we do a direct fetch
   const [featuredPlaces, setFeaturedPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

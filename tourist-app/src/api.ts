@@ -4,7 +4,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 // Replace this with your actual API endpoint.
 // For example: 'https://api.yourdomain.com/v1'
 // Or, if you are running a local backend: 'http://localhost:8000/api'
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api'; // Fallback to /api if not set in .env
+const API_BASE_URL = process.env.REACT_APP_BASE_API_URL || '/api'; // Fallback to /api if not set in .env
 
 interface ApiError {
   message: string;
