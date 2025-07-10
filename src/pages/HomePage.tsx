@@ -1,25 +1,63 @@
-// pages/HomePage.js
-import React, { useState } from 'react';
-import { Search, Star } from 'lucide-react';
+// pages/HomePage.tsx
+import React, { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
 import PlaceCard from '../components/PlaceCard';
-import { mockPlaces } from '../data/mockPlaces';
 import { categories } from '../data/categories';
+import { fetchPlaces, Place } from '../services/placeService'; // Import fetchPlaces and Place type
 
-const HomePage = ({ onSelectPlace, userInterests, favoritePlaceIds, onToggleFavorite, onAddToItinerary }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+// Define props interface for HomePage
+interface HomePageProps {
+  onSelectPlace: (place: Place) => void;
+  userInterests: string[];
+  favoritePlaceIds: string[];
+  onToggleFavorite: (placeId: string) => void;
+  onAddToItinerary: (place: Place) => void; // Assuming onAddToItinerary takes a Place object
+}
 
-  const filteredPlaces = mockPlaces.filter(place => {
+const HomePage: React.FC<HomePageProps> = ({ onSelectPlace, userInterests, favoritePlaceIds, onToggleFavorite, onAddToItinerary }) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ทั้งหมด');
+  const [allPlaces, setAllPlaces] = useState<Place[]>([]); // State for all places fetched from API
+  const [isLoading, setIsLoading] = useState<boolean>(true); // State for loading status
+  const [error, setError] = useState<string | null>(null); // State for error handling
+
+  useEffect(() => {
+    const loadPlaces = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const placesData = await fetchPlaces();
+        setAllPlaces(placesData);
+      } catch (err) {
+        setError('Failed to load places. Please try again later.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPlaces();
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  const filteredPlaces = allPlaces.filter(place => {
     const matchesSearch = place.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'ทั้งหมด' || place.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const recommendedPlaces = mockPlaces.filter(place =>
+  const recommendedPlaces = allPlaces.filter(place =>
     userInterests.some(interest => place.tags.includes(interest))
   );
 
-  const hiddenGems = mockPlaces.filter(place => place.hiddenGem);
+  const hiddenGems = allPlaces.filter(place => place.hiddenGem);
+
+  if (isLoading) {
+    return <div className="p-4 text-center">Loading places...</div>; // Or a spinner component
+  }
+
+  if (error) {
+    return <div className="p-4 text-center text-red-500">{error}</div>;
+  }
 
   return (
     <div className="p-4 pb-20 bg-slate-50 dark:bg-slate-900 min-h-screen transition-colors duration-300">
