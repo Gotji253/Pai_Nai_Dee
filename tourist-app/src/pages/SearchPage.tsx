@@ -116,7 +116,7 @@ const SearchPage: React.FC = () => {
       {/* Main content area with Search Results and Trip Planner */}
       <Grid container spacing={3}>
         {/* Search Results Section */}
-        <Grid item xs={12} md={8}>
+        <Grid xs={12} md={8}>
           {isLoading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
               <CircularProgress />
@@ -131,7 +131,7 @@ const SearchPage: React.FC = () => {
             <Grid container spacing={3}>
               {places.length > 0 ? (
                 places.map(place => (
-                  <Grid item xs={12} sm={6} md={6} lg={4} key={place.id}> {/* Adjusted lg for better fit */}
+                  <Grid xs={12} sm={6} md={6} lg={4} key={place.id}> {/* Adjusted lg for better fit */}
                     <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                       {place.photos && place.photos.length > 0 && (
                         <Box
@@ -169,7 +169,7 @@ const SearchPage: React.FC = () => {
                   </Grid>
                 ))
               ) : (
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <Typography sx={{ textAlign: 'center', mt: 3 }}>
                     No places found matching your criteria. Try a different search or adjust your filters.
                   </Typography>
@@ -180,7 +180,7 @@ const SearchPage: React.FC = () => {
         </Grid>
 
         {/* Trip Planner Section - visible on medium screens and up as a sidebar, stacks on small screens */}
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <Box sx={{ position: { md: 'sticky' }, top: { md: '80px' } /* Adjust based on header height */ }}>
             <TripPlanner />
           </Box>
