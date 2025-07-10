@@ -1,0 +1,3 @@
+pytest>=7.0.0  # For running tests
+# Add other backend dependencies here if any are introduced later
+# e.g., Flask, FastAPI, requests, numpy, pandas, etc.
