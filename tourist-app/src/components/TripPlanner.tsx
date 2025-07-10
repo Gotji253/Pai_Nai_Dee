@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box, Typography, List, ListItem, ListItemText, IconButton, TextField, Button,
-  Paper, Divider, CircularProgress, Alert, Grid, Card, CardContent, CardActions, Chip
+  Paper, Divider, CircularProgress, Alert, Grid, Card, CardContent, CardActions, Chip,
+  Snackbar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
@@ -21,6 +22,9 @@ const TripPlanner: React.FC = () => {
 
   const [tripName, setTripName] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   useEffect(() => {
     if (submitTripSuccess) {
@@ -43,11 +47,13 @@ const TripPlanner: React.FC = () => {
 
   const handleSaveTrip = async () => {
     if (!tripName.trim()) {
-      alert('Please enter a name for your trip.');
+      setSnackbarMessage('Please enter a name for your trip.');
+      setSnackbarOpen(true);
       return;
     }
     if (currentTripPlaces.length === 0) {
-      alert('Please add at least one place to your trip.');
+      setSnackbarMessage('Please add at least one place to your trip.');
+      setSnackbarOpen(true);
       return;
     }
 
@@ -56,12 +62,22 @@ const TripPlanner: React.FC = () => {
     // Success/error is handled by useEffect and context state
   };
 
-  const handleClearTrip = () => {
-    if (window.confirm('Are you sure you want to clear all places from the current trip planner?')) {
+  const handleOpenConfirmDialog = () => {
+    setConfirmDialogOpen(true);
+  };
+
+  const handleCloseConfirmDialog = (confirmed: boolean) => {
+    setConfirmDialogOpen(false);
+    if (confirmed) {
       clearCurrentTrip();
       setTripName('');
       resetSubmitTripStatus();
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setSnackbarMessage('');
   };
 
   if (currentTripPlaces.length === 0 && !showSuccessMessage && !submitTripError) {
@@ -130,7 +146,7 @@ const TripPlanner: React.FC = () => {
             <Button
               variant="outlined"
               color="warning"
-              onClick={handleClearTrip}
+              onClick={handleOpenConfirmDialog}
               disabled={isSubmittingTrip || currentTripPlaces.length === 0}
               sx={{ flexGrow: {sm: 1} }}
             >
@@ -156,6 +172,35 @@ const TripPlanner: React.FC = () => {
         </Typography>
       )}
 
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
+
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => handleCloseConfirmDialog(false)}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            Are you sure you want to clear all places from the current trip planner? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseConfirmDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleCloseConfirmDialog(true)} color="warning" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };
