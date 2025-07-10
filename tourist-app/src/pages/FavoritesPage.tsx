@@ -46,7 +46,7 @@ const FavoritesPage: React.FC = () => {
       ) : (
         <Grid container spacing={3}>
           {favoritePlaces.map(place => (
-            <Grid item xs={12} sm={6} md={4} key={place.id}>
+            <Grid item component="div" xs={12} sm={6} md={4} key={place.id}>
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                  {place.image && (
                     <CardMedia
