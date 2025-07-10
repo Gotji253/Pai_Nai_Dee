@@ -1,44 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, CircularProgress, Alert, Chip } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Place } from '../contexts/PlacesContext'; // Assuming Place type is exported
-import { get } from '../api'; // Import the get function
+import { usePlaces, Place } from '../contexts/PlacesContext'; // Import usePlaces
 
 const HomePage: React.FC = () => {
-  const [featuredPlaces, setFeaturedPlaces] = useState<Place[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { places, isLoading, error, fetchPlaces } = usePlaces();
 
   useEffect(() => {
-    const loadFeaturedPlaces = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        // Fetches a limited number of places for the homepage using a direct API call.
-        // This approach keeps homepage data independent of the global PlacesContext state.
-        // Assumes the API supports a 'limit' query parameter.
-        const queryParams: Record<string, any> = { limit: 3 };
-        // Other potential parameters for fetching featured items:
-        // queryParams.sortBy = 'rating';
-        // queryParams.order = 'desc';
-        // queryParams.isFeatured = true;
+    // Fetch places if they haven't been loaded yet or if we specifically want to refresh them for the homepage.
+    // Consider if the PlacesContext already loads places on app start.
+    // If PlacesContext doesn't load initially, or if HomePage needs specific filters:
+    if (places.length === 0) { // Only fetch if places array is empty, or tailor based on requirements
+      fetchPlaces(); // No specific params, fetches all or default set from context's fetchPlaces
+    }
+    // If you want HomePage to always refresh or use specific query like "featured":
+    // fetchPlaces(undefined, undefined, ['featured']); // Example: if API supports a 'featured' tag
+  }, [fetchPlaces, places.length]); // Add places.length to dependencies if you only fetch when empty
 
-        const response = await get<Place[]>('/places', queryParams);
-        setFeaturedPlaces(response);
-
-      } catch (e: any) {
-        console.error("Failed to fetch featured places:", e);
-        setError(e.message || 'Could not load featured destinations.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadFeaturedPlaces();
-  }, []); // Empty dependency array: fetch only once on mount. `get` is stable.
-
-  // Need to import `get` from `../api` for the above to work.
-  // Let's add that import: import { get } from '../api';
+  // Determine featured places from the context's places array
+  // For now, let's take the first 3 as "featured"
+  const featuredPlaces = places.slice(0, 3);
 
   return (
     <Container maxWidth="lg" sx={{ mt: 2, mb: 2 }}>
