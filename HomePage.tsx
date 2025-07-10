@@ -193,7 +193,8 @@ const HomePage: React.FC = () => {
         <Grid container spacing={3}>
           {featuredPlaces.map((item) => (
             // MUI v7: Removed 'item' prop, direct props like xs, sm, md are used.
-            <Grid xs={12} sm={6} md={4} key={item.id}>
+            // Adding item prop as it's likely MUI v5 and this is a common cause for TS2769
+            <Grid item xs={12} sm={6} md={4} key={item.id}>
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <CardMedia
                   component="img"
