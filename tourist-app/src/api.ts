@@ -151,3 +151,39 @@ const handleApiError = (error: AxiosError): ApiError => {
 };
 
 export default apiClient;
+
+// --- Type Definitions for API Responses ---
+// Moving these here from PlaceDetailsPage.tsx for better structure and reusability.
+
+export interface Review {
+  id: string;
+  user: string;
+  comment: string;
+  rating: number;
+  date: string; // Assuming date is a string from API
+}
+
+export interface PlaceDetailsType {
+  id:string;
+  name: string;
+  description: string;
+  images: string[];
+  rating: number;
+  reviews: Review[];
+  location: string; // Assuming string from API, adjust if it's an object
+  category: string;
+  tags: string[];
+  priceRange?: string; // Optional
+}
+
+
+// --- Specific API Endpoints ---
+
+/**
+ * Fetches details for a specific place by its ID.
+ * @param id The ID of the place to fetch.
+ * @returns Promise<PlaceDetailsType>
+ */
+export const fetchPlaceById = async (id: string): Promise<PlaceDetailsType> => {
+  return get<PlaceDetailsType>(`/places/${id}`);
+};
